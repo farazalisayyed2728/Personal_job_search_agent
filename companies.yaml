@@ -23,16 +23,18 @@
 # noise and makes the prefilter counts impossible to reason about.
 
 companies:
-  - {ats: greenhouse, slug: stripe,      name: Stripe}
-  - {ats: greenhouse, slug: databricks,  name: Databricks}
-  - {ats: greenhouse, slug: cloudflare,  name: Cloudflare}
-  - {ats: greenhouse, slug: figma,       name: Figma}
-  - {ats: greenhouse, slug: dropbox,     name: Dropbox}
-  - {ats: greenhouse, slug: coinbase,    name: Coinbase}
-  - {ats: greenhouse, slug: reddit,      name: Reddit}
-  - {ats: lever,      slug: voleon,      name: Voleon}
-
-  - {ats: ashby,      slug: openai,      name: OpenAI}
-  - {ats: ashby,      slug: ramp,        name: Ramp}
-  - {ats: ashby,      slug: linear,      name: Linear}
-  - {ats: ashby,      slug: vanta,       name: Vanta}
+- {ats: greenhouse, slug: capco, name: Capco}
+- {ats: greenhouse, slug: payoneer, name: Payoneer}
+- {ats: greenhouse, slug: tide, name: Tide}
+- {ats: greenhouse, slug: inmobi, name: InMobi}
+- {ats: greenhouse, slug: pubmatic, name: PubMatic}
+- {ats: greenhouse, slug: cognite, name: Cognite}
+- {ats: lever, slug: drivetrain, name: Drivetrain}
+- {ats: lever, slug: entrata, name: Entrata}
+- {ats: lever, slug: lingarogroup, name: Lingaro}
+- {ats: lever, slug: paytm, name: Paytm}
+- {ats: lever, slug: brillio-2, name: Brillio}
+- {ats: lever, slug: weekdayworks, name: Weekday}
+- {ats: ashby, slug: plane, name: Plane}
+- {ats: ashby, slug: DehazeLabs, name: DehazeLabs}
+- {ats: ashby, slug: secfix, name: Secfix}
