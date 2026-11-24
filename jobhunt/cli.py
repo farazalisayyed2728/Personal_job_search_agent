@@ -24,6 +24,11 @@ from .store import Store
 ROOT = Path(__file__).resolve().parent.parent
 
 
+def _path_setting(cfg: dict, key: str, default: str) -> str:
+    env_key = f"JOBHUNT_{key.upper()}"
+    return os.getenv(env_key, str(cfg.get(key, default)))
+
+
 def _load_env(path: str = ".env") -> None:
     """Minimal .env reader so there is no python-dotenv dependency."""
     p = Path(path)
@@ -88,6 +93,10 @@ def cmd_profile(args) -> int:
 # ---------------------------------------------------------------------- run --
 def cmd_run(args) -> int:
     cfg = _cfg(args.config)
+    cfg["profile_file"] = _path_setting(cfg, "profile_file", "profile.json")
+    cfg["seen_file"] = _path_setting(cfg, "seen_file", "seen.json")
+    cfg["digest_file"] = _path_setting(cfg, "digest_file", "out/digest.html")
+    cfg["tracker_csv"] = _path_setting(cfg, "tracker_csv", "out/tracker.csv")
     profile = _load_profile(cfg, allow_sample=args.mock)
     if profile is None:
         return 1
