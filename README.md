@@ -263,4 +263,5 @@ and freshness. Set `SCREEN_PROVIDER=groq` or `gemini` and it's free.
 
 Use `--limit` while tuning filters so a bad regex can't run up a bill.
 #   J o b h u n t _ u s i n g _ L L M  
+ #   P e r s o n a l _ j o b _ s e a r c h _ a g e n t  
  
