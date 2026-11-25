@@ -8,6 +8,7 @@ import {
 import './styles.css'
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '')
+const TEST_READ_ONLY = import.meta.env.VITE_TEST_READ_ONLY === 'true'
 
 function Avatar({ name }) {
   const initials = name?.split(' ').map((part) => part[0]).join('').slice(0, 2) || 'FA'
@@ -35,7 +36,7 @@ function Score({ value }) {
 
 function App() {
   const [dashboard, setDashboard] = useState(null)
-  const [authenticated, setAuthenticated] = useState(false)
+  const [authenticated, setAuthenticated] = useState(TEST_READ_ONLY)
   const [password, setPassword] = useState('')
   const [authError, setAuthError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -62,6 +63,7 @@ function App() {
       if (!response.ok) throw new Error('API unavailable')
       setDashboard(await response.json())
       setAuthenticated(true)
+      setAuthError('')
     } catch {
       setAuthError('Could not connect to the backend.')
     } finally {
@@ -203,13 +205,17 @@ function App() {
           </div>
           <div className="header-actions">
             <button className="icon-button" onClick={load} aria-label="Refresh dashboard"><RefreshCw size={17} className={loading ? 'spinning' : ''} /></button>
-            <button className="primary-button" onClick={runAgent} disabled={running}>
-              {running ? <RefreshCw size={17} className="spinning" /> : <Play size={17} fill="currentColor" />}
-              {running ? 'Running search' : 'Run search'}
-            </button>
+            {!TEST_READ_ONLY && (
+              <button className="primary-button" onClick={runAgent} disabled={running}>
+                {running ? <RefreshCw size={17} className="spinning" /> : <Play size={17} fill="currentColor" />}
+                {running ? 'Running search' : 'Run search'}
+              </button>
+            )}
           </div>
         </header>
 
+        {TEST_READ_ONLY && <div className="test-mode-notice">Temporary read-only test mode is on. Dashboard data is public; turn it off after testing.</div>}
+        {authError && <div className="run-message">{authError}</div>}
         {runMessage && <div className="run-message">{runMessage}</div>}
 
         {activeTab === 'Overview' && (
@@ -260,7 +266,7 @@ function App() {
                         <div className="job-title-row"><div><h3>{job.title}</h3><p>{job.company}<span>•</span><MapPin size={13} />{job.location || 'Location not listed'}</p></div><Score value={job.score} /></div>
                         <p className="job-reason">{job.reason || 'This role has been ranked against your profile.'}</p>
                         <div className="job-actions">
-                          <button className={`applied-button ${job.applied ? 'done' : ''}`} onClick={() => toggleApplied(job)}>{job.applied ? <Check size={15} /> : null}{job.applied ? 'Applied' : 'Mark applied'}</button>
+                          <button className={`applied-button ${job.applied ? 'done' : ''}`} onClick={() => toggleApplied(job)} disabled={TEST_READ_ONLY}>{job.applied ? <Check size={15} /> : null}{job.applied ? 'Applied' : 'Mark applied'}</button>
                           {job.url && job.url !== '#' && <a href={job.url} target="_blank" rel="noreferrer">View role <ArrowUpRight size={15} /></a>}
                         </div>
                       </div>
@@ -291,7 +297,7 @@ function App() {
             <div className="section-heading"><div><p className="eyebrow">JOB BOARD</p><h2>All opportunities</h2></div><button className="filter-button" onClick={() => setFilterOpen((open) => !open)}><SlidersHorizontal size={16} />Filters</button></div>
             {filterOpen && <div className="advanced-filters"><label>Minimum match<input type="range" min="0" max="10" value={minimumScore} onChange={(event) => setMinimumScore(Number(event.target.value))} /><span>{minimumScore}/10</span></label><label>Location<select value={locationFilter} onChange={(event) => setLocationFilter(event.target.value)}><option>All locations</option><option>Pune</option><option>Bengaluru</option><option>India</option><option>Remote</option></select></label></div>}
             <div className="toolbar"><label className="search-box"><Search size={17} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search role or company" /></label><div className="filter-tabs">{['All', 'Strong matches', 'Applied'].map((item) => <button key={item} className={filter === item ? 'active' : ''} onClick={() => setFilter(item)}>{item}</button>)}</div></div>
-            <div className="job-list">{filteredJobs.map((job) => <article className="job-card" key={job.job_id}><div className="company-logo">{job.company?.slice(0, 1).toUpperCase()}</div><div className="job-main"><div className="job-title-row"><div><h3>{job.title}</h3><p>{job.company}<span>•</span><MapPin size={13} />{job.location}</p></div><Score value={job.score} /></div><p className="job-reason">{job.reason}</p><div className="job-actions"><button className={`applied-button ${job.applied ? 'done' : ''}`} onClick={() => toggleApplied(job)}>{job.applied ? <Check size={15} /> : null}{job.applied ? 'Applied' : 'Mark applied'}</button>{job.url && <a href={job.url} target="_blank" rel="noreferrer">View role <ArrowUpRight size={15} /></a>}</div></div></article>)}</div>
+            <div className="job-list">{filteredJobs.map((job) => <article className="job-card" key={job.job_id}><div className="company-logo">{job.company?.slice(0, 1).toUpperCase()}</div><div className="job-main"><div className="job-title-row"><div><h3>{job.title}</h3><p>{job.company}<span>•</span><MapPin size={13} />{job.location}</p></div><Score value={job.score} /></div><p className="job-reason">{job.reason}</p><div className="job-actions"><button className={`applied-button ${job.applied ? 'done' : ''}`} onClick={() => toggleApplied(job)} disabled={TEST_READ_ONLY}>{job.applied ? <Check size={15} /> : null}{job.applied ? 'Applied' : 'Mark applied'}</button>{job.url && <a href={job.url} target="_blank" rel="noreferrer">View role <ArrowUpRight size={15} /></a>}</div></div></article>)}</div>
           </section>
         )}
 

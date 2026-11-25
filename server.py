@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parent
 app = FastAPI(title="Job Hunt Agent", version="1.0")
 
 AUTH_PASSWORD = os.getenv("JOBHUNT_PASSWORD", "").strip()
+TEST_READ_ONLY = os.getenv("JOBHUNT_TEST_READ_ONLY", "").lower() == "true"
 SESSION_COOKIE = "jobhunt_session"
 ACTIVE_SESSIONS: set[str] = set()
 RUN_LOCK = threading.Lock()
@@ -55,6 +56,12 @@ def require_auth(request: Request):
             detail="Authentication required",
         )
     return token
+
+
+def require_read_auth(request: Request):
+    if TEST_READ_ONLY:
+        return "read-only-test"
+    return require_auth(request)
 
 
 @app.post("/api/auth/login")
@@ -152,7 +159,7 @@ def health():
 
 
 @app.get("/api/profile")
-def profile(_auth: str = Depends(require_auth)):
+def profile(_auth: str = Depends(require_read_auth)):
     cfg = read_yaml(ROOT / "config.yaml", {})
     profile_setting = os.getenv(
         "JOBHUNT_PROFILE_FILE",
@@ -168,7 +175,7 @@ def profile(_auth: str = Depends(require_auth)):
 
 
 @app.get("/api/dashboard")
-def dashboard(_auth: str = Depends(require_auth)):
+def dashboard(_auth: str = Depends(require_read_auth)):
     cfg = read_yaml(ROOT / "config.yaml", {})
     seen_setting = os.getenv(
         "JOBHUNT_SEEN_FILE",
