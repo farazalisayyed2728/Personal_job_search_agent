@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parent
 app = FastAPI(title="Job Hunt Agent", version="1.0")
 
 AUTH_PASSWORD = os.getenv("JOBHUNT_PASSWORD", "").strip()
-TEST_READ_ONLY = os.getenv("JOBHUNT_TEST_READ_ONLY", "").lower() == "true"
+TEST_READ_ONLY = os.getenv("JOBHUNT_TEST_READ_ONLY", "true").lower() == "true"
 SESSION_COOKIE = "jobhunt_session"
 ACTIVE_SESSIONS: set[str] = set()
 RUN_LOCK = threading.Lock()

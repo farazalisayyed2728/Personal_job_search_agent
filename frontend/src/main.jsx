@@ -8,7 +8,7 @@ import {
 import './styles.css'
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '')
-const TEST_READ_ONLY = import.meta.env.VITE_TEST_READ_ONLY === 'true'
+const TEST_READ_ONLY = import.meta.env.VITE_TEST_READ_ONLY !== 'false'
 
 function Avatar({ name }) {
   const initials = name?.split(' ').map((part) => part[0]).join('').slice(0, 2) || 'FA'
