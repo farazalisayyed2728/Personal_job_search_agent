@@ -133,6 +133,12 @@ def cmd_run(args) -> int:
         subject, doc = digest_mod.build([], scanned, 0, store.stats())
         path = digest_mod.write(doc, cfg.get("digest_file", "out/digest.html"))
         print(f"\nnothing new today. preview: {path}")
+        if args.send:
+            try:
+                mailer.send(subject, doc)
+            except Exception as e:
+                print(f"  ! email failed ({type(e).__name__}: {e}) — digest still on disk")
+                return 1
         return 0
 
     # ---- 3. screen
@@ -189,12 +195,14 @@ def cmd_run(args) -> int:
     print(f"  wrote {path}")
 
     sent = False
+    email_failed = False
     if args.send:
         try:
             mailer.send(subject, doc)
             sent = True
         except Exception as e:  # bad app password, blocked port, offline
             print(f"  ! email failed ({type(e).__name__}: {e}) — digest still on disk")
+            email_failed = True
     else:
         print("  --send not passed, email skipped")
 
@@ -205,7 +213,7 @@ def cmd_run(args) -> int:
           f"-> {candidates} new -> {len(shortlist)} in digest")
     print(f"subject: {subject}")
     print(f"tracker: {store.stats()}  ({csv_path})")
-    return 0
+    return 1 if email_failed else 0
 
 
 # ------------------------------------------------------------------- misc --
