@@ -7,10 +7,12 @@
 3. Use:
    - Build command: `pip install -r requirements.txt`
    - Start command: `uvicorn server:app --host 0.0.0.0 --port $PORT`
-4. Add `ALLOWED_ORIGINS` with the Vercel frontend URL, for example:
-   `https://jobhunt.vercel.app`
-   Add `JOBHUNT_PASSWORD` with a strong, unique workspace password.
-5. Deploy. The API health endpoint is `/api/health`.
+4. Set `ALLOWED_ORIGINS` to the exact Production domain shown by the separate
+   frontend's Vercel project, with no trailing slash.
+5. Set `JOBHUNT_PASSWORD` to a new strong, unique workspace password. If you
+   don't know the old value, replace it here; Render does not reveal saved
+   secret values.
+6. Deploy. The API health endpoint is `/api/health`.
 
 Keep provider keys and mail settings on Render, never in the frontend.
 For live dashboard runs, also set `SMTP_USER`, `SMTP_PASS`, and `MAIL_TO`.
@@ -18,25 +20,7 @@ Use a Gmail App Password for `SMTP_PASS`, not the account password.
 
 ## Frontend on Vercel
 
-1. Import the same repository in Vercel.
-2. Set the root directory to `frontend`.
-3. Set `VITE_API_URL` to the Render service URL, without a trailing slash.
-4. Deploy.
-
-The frontend keeps a restrained demo fallback available if the API is not
-configured yet, so previews remain useful during setup.
-
-## Temporary read-only test mode
-
-Only enable this briefly. It makes the candidate profile and tracker readable
-without signing in, so anyone with the site URL can view that data. Job updates
-and agent runs remain protected.
-
-The temporary test bypass defaults to on. To restore authentication, set both
-variables to `false`, then redeploy both services:
-
-- Render: `JOBHUNT_TEST_READ_ONLY=false`
-- Vercel: `VITE_TEST_READ_ONLY=false` (Config, not Secret)
-
-While testing is on, anyone with the site URL can view the candidate profile and
-tracker. Job updates and agent runs still require authentication.
+The frontend lives in the separate `Personal_job_search_agent_frontend`
+repository. Import that repository into Vercel with root directory `./` and
+build command `npm run build`. Set `VITE_API_URL` to the Render service URL as
+a Config variable. The login screen and API authentication are enabled.

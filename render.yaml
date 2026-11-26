@@ -11,8 +11,6 @@ services:
         value: https://personal-job-search-agent-eight.vercel.app
       - key: JOBHUNT_PASSWORD
         sync: false
-      - key: JOBHUNT_TEST_READ_ONLY
-        value: "true"
       - key: COOKIE_SECURE
         value: "true"
       - key: JOBHUNT_SEEN_FILE
